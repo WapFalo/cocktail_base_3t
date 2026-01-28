@@ -12,6 +12,7 @@ jobs:
   Quality_Sonarqube:
     needs: [Test_Back_Front]
     uses: ./.github/workflows/01-2_sonarqube.yml
+    secrets: inherit
 
   # Security:
   #   needs: [Quality_Sonarqube]
