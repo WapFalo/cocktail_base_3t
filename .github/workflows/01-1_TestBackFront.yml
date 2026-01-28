@@ -1,0 +1,137 @@
+name: 01-1 - Integration - TEST
+
+on:
+  workflow_call
+
+jobs:
+  Backend:
+    runs-on: ubuntu-latest
+    default:
+      run:
+        working-directory: ./backend
+    services:
+      mariadb:
+        image: mariadb:latest
+        env:
+          MARIADB_ROOT_PASSWORD: toor
+          MARIADB_DATABASE: test
+          MARIADB_USER: test
+          MARIADB_PASSWORD: test
+        ports:
+          - 3306:3306
+        options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
+    env:
+      BDD_HOST: 127.0.0.1
+      BDD_PASSWORD: test
+      BDD_NAME: test
+      BDD_USER: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Database Cnx Check
+        run: |
+          sudo apt-get install mariadb-client -y
+          mysql --host 127.0.0.1 --port 3306 -u root -ptoor -e "SHOW DATABASES;"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install backend dependencies
+        run: npm install
+
+      - name: Init bdd
+        run: npm run initbdd
+
+      - name: Populate bdd
+        run: |
+          mysql -u root -ptoor --host 127.0.0.1 --port 3306 --database test < ./test/insert_test_user.sql
+
+      - name: Run backend tests
+        run: npm run test:cov
+
+      - name: Upload backend coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage-report
+          path: backend/coverage
+          retention-days: 1
+  
+  Frontend:
+    needs: [Backend]
+    runs-on: ubuntu-latest
+    default:
+      run:
+        working-directory: ./frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start Hotbuild backend
+        run: |
+          cd ../_tools/docker
+          docker compose -f docker-compose-back-build.yml up -d
+          docker ps -a
+
+      - name: Sleep for 10 seconds
+        run: jakejarvis/wait-action@master
+        with:
+          time: '10s'
+      
+      - name: Test backend container
+        if: success()
+        run: curl http://127.0.0.1:12000
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Cypress E2E install
+        uses: cypress-io/github-action@v6
+        with:
+          runTests: false
+          working-directory: ./frontend
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Run Cypress E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+        install: false
+        working-directory: ./frontend
+        start: npm run dev
+
+      - name: Cypress test and coverage upload
+        run: npm run cypress:cov
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: ./frontend/cypress/screenshots
+          retention-days: 1
+
+      - uses: actions/upload-arifact@v4
+        if: always()
+        with:
+          name: cypress-videos
+          path: ./frontend/cypress/videos
+          retention-days: 1
+
+      - name: Upload frontend coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage-report
+          path: frontend/coverage
+          retention-days: 1
+
+      - name: Shutdown hotbuild backend
+        if: always()
+        run: |
+          cd ../_tools/docker
+          docker compose -f docker-compose-back-build.yml down
