@@ -22,7 +22,7 @@ jobs:
         options: --health-cmd="healthcheck.sh --connect --innodb_initialized" --health-interval=10s --health-timeout=5s --health-retries=3
     env:
       BDD_HOST: 127.0.0.1
-      BDD_PASSWORD: test
+      BDD_PASS: test
       BDD_NAME: test
       BDD_USER: test
     steps:
