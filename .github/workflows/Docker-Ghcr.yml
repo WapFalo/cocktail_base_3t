@@ -25,14 +25,10 @@ jobs:
           echo "Docker mode: ${{ inputs.docker-mode }}"
 
   Build_and_push_Docker:
+    runs-on: ubuntu-latest
     steps:
-
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
-        with:
-          # registry: ${{ env.REGISTRY }}
-          # username: ${{ env.USERNAME }}
-          # password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Downcase Image Name
         run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
