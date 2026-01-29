@@ -42,7 +42,7 @@ jobs:
         with:
           context: backend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-back:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-backend:latest
           build-args: MODE=${{ inputs.docker-mode}}
 
       - name: Front build and push docker image
@@ -50,5 +50,5 @@ jobs:
         with:
           context: frontend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-front:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-frontend:latest
           build-args: MODE=${{ inputs.docker-mode}}
