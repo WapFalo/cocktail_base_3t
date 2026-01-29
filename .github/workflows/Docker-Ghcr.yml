@@ -1,0 +1,25 @@
+name: 02-1 Staging - Docker-Ghcr
+
+on:
+  workflow_call:
+    inputs:
+      docker-mode:
+        description: 'Docker build mode (canary or release)'
+        required: false
+        type: string
+        default: ""
+
+env:
+  REGISTRY: ghcr.io
+  USERNAME: ${{ github.actor }}
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  Display_data:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Docker registry: ${{ env.REGISTRY }}"
+          echo "Docker image name: ${{ env.IMAGE_NAME }}"
+          echo "Docker username: ${{ env.USERNAME }}"
+          echo "Docker mode: ${{ inputs.docker-mode }}"
