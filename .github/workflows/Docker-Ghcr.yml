@@ -23,3 +23,32 @@ jobs:
           echo "Docker image name: ${{ env.IMAGE_NAME }}"
           echo "Docker username: ${{ env.USERNAME }}"
           echo "Docker mode: ${{ inputs.docker-mode }}"
+
+  Build_and_push_Docker:
+    steps:
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          # registry: ${{ env.REGISTRY }}
+          # username: ${{ env.USERNAME }}
+          # password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Downcase Image Name
+        run: echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Back build and push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: backend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-back:latest
+          build-args: MODE=${{ inputs.docker-mode}}
+
+      - name: Front build and push docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: frontend
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}-front:latest
+          build-args: MODE=${{ inputs.docker-mode}}
