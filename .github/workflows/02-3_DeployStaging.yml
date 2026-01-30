@@ -70,7 +70,7 @@ jobs:
         with:
           host: ${{env.AZURE_VM_IP}}
           port: ${{secrets.AZURE_PORT}} 
-          username: ${{secrets.AZURE_VM_LOGIN}}
+          username: ${{secrets.AZURE_VM_USERNAME}}
           password: ${{secrets.AZURE_VM_PASSWORD}}
           script: |
             curl -o install_docker.sh https://raw.githubusercontent.com/azure-custom-cli/scripts/refs/heads/main/install_docker_ubuntu.sh
