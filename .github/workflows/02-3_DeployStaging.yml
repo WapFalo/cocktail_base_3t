@@ -36,18 +36,18 @@ jobs:
       #     parameters: adminUsername=${{ secrets.AZURE_VM_USERNAME }} adminPasswordOrKey=${{ secrets.AZURE_VM_PASSWORD }} vmName=ci-cd-project-vm location=${{ env.ResourceGroupLocation }} vmSize=Standard_B2ats_v2
 
       - name: Deploy VM via CLI (Sans Template)
-          uses: azure/CLI@v2
-          with:
-            inlineScript: |
-              az vm create \
-                --resource-group ${{ env.ResourceGroupName }} \
-                --name "ci-cd-project-vm" \
-                --image Ubuntu2204 \
-                --size Standard_B2ats_v2 \
-                --admin-username ${{ secrets.AZURE_VM_LOGIN }} \
-                --admin-password ${{ secrets.AZURE_VM_PASSWORD }} \
-                --public-ip-sku Standard \
-                --assign-identity
+        uses: azure/CLI@v2
+        with:
+        inlineScript: |
+          az vm create \
+          --resource-group ${{ env.ResourceGroupName }} \
+          --name "ci-cd-project-vm" \
+          --image Ubuntu2204 \
+          --size Standard_B2ats_v2 \
+          --admin-username ${{ secrets.AZURE_VM_LOGIN }} \
+          --admin-password ${{ secrets.AZURE_VM_PASSWORD }} \
+          --public-ip-sku Standard \
+          --assign-identity
 
       - name: Open Port on Security Group
         uses: azure/CLI@v2
