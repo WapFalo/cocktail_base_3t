@@ -44,7 +44,7 @@ jobs:
             --name "ci-cd-project-vm" \
             --image Ubuntu2204 \
             --size Standard_B2ats_v2 \
-            --admin-username ${{ secrets.AZURE_VM_LOGIN }} \
+            --admin-username ${{ secrets.AZURE_VM_USERNAME }} \
             --admin-password ${{ secrets.AZURE_VM_PASSWORD }} \
             --public-ip-sku Standard \
             --assign-identity
