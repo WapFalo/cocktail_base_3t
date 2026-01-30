@@ -31,7 +31,7 @@ jobs:
         with:
           resourceGroupName: ${{ env.ResourceGroupName }}
           scope: resourcegroup
-          template: ./infra/azuredeploy.json
+          template: ../infra/azuredeploy.json
           parameters: adminUsername=${{ secrets.AZURE_VM_USERNAME }} adminPasswordOrKey=${{ secrets.AZURE_VM_PASSWORD }} vmName=ci-cd-project-vm location=${{ env.ResourceGroupLocation }} vmSize=Standard_B2ats_v2
 
       - name: Open Port on Security Group
