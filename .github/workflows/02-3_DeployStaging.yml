@@ -27,7 +27,7 @@ jobs:
             az group create --name ${{ env.ResourceGroupName }} --location ${{ env.ResourceGroupLocation }}
 
       - name: Azure CLI Deploy ARM
-        uses: azure/cli@v2
+        uses: azure/arm-deploy@v2
         with:
           resourceGroupName: ${{ env.ResourceGroupName }}
           scope: resourcegroup
